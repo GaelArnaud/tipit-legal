@@ -15,8 +15,8 @@
 :root{
   --ink:#0B120E;
   --paper:#FCFCFB;
-  --sage:#67AD83;
-  --sage-deep:#41815F;
+  --sage:#51B180;
+  --sage-deep:#3E9E68;
   --gold:#D9A83C;
   --pin:#E2574C;
   --slate:#31423A;
@@ -95,8 +95,8 @@ nav{
   padding:12px 26px;transition:transform .15s ease, background .15s ease;
 }
 .btn:active{transform:scale(.97)}
-.btn-primary{background:var(--sage);color:#fff}
-.btn-primary:hover{background:var(--sage-deep)}
+.btn-primary{background:var(--sage);color:var(--ink)}
+.btn-primary:hover{background:var(--sage-deep);color:var(--ink)}
 .btn-ghost{border:1.5px solid var(--ink);color:var(--ink);background:none}
 .btn-ghost:hover{background:var(--ink);color:var(--paper)}
 .btn-sm{padding:9px 18px;font-size:.88rem}
@@ -110,7 +110,7 @@ nav{
   font-size:clamp(2.4rem,5.2vw,3.9rem);
   font-weight:800;letter-spacing:-.03em;margin-bottom:1.2rem;
 }
-.hero h1 em{font-style:normal;color:var(--sage-deep)}
+.hero h1 em{font-style:normal;color:var(--sage)}
 .hero p.sub{font-size:1.13rem;color:var(--slate);max-width:34rem;margin-bottom:2rem}
 .hero-ctas{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-bottom:2.2rem}
 .qr-block{display:flex;align-items:center;gap:16px}
@@ -254,7 +254,7 @@ footer{background:var(--ink);color:var(--paper);padding:52px 0}
   background:#0B1712;box-shadow:0 22px 60px rgba(11,18,14,.28);
   line-height:0;
 }
-.phone img{width:100%;height:auto;display:block;border-radius:31px}
+.phone img{width:100%;height:auto;aspect-ratio:460/996;display:block;border-radius:31px;object-fit:cover}
 .hero-phone{max-width:290px;margin:0 auto;transform:rotate(-1.6deg)}
 @media(prefers-reduced-motion:no-preference){
   .hero-phone{animation:float 7s ease-in-out infinite}
@@ -773,8 +773,10 @@ function clipTittle(span, li){
   const word = span.getAttribute("data-w");
   const geomFont = /bricolage/i.test(cs.fontFamily) ? DOT_GEOM.bricolage : DOT_GEOM.instrument;
   const g = geomFont[word[li]] || geomFont.i;
-  const prefix = measureCtx.measureText(word.slice(0, li)).width;
-  const wordW = measureCtx.measureText(word).width;
+  const lsRaw = parseFloat(cs.letterSpacing);
+  const ls = isNaN(lsRaw) ? 0 : lsRaw;
+  const prefix = measureCtx.measureText(word.slice(0, li)).width + ls * li;
+  const wordW = span.getBoundingClientRect().width;
   const L = prefix + g[0] * px;
   const R = prefix + g[1] * px;
   span.style.setProperty("--cl", Math.max(0, L).toFixed(2) + "px");
@@ -875,6 +877,12 @@ function makeQR(id){
   const url = "https://thetipitapp.com";
   new QRCode(el,{ text:url+"/#signup", width:208, height:208, colorDark:"#0B120E", colorLight:"#ffffff", correctLevel:QRCode.CorrectLevel.M });
 }
+window.addEventListener("load", () => {
+  if(location.hash){
+    const el = document.querySelector(location.hash);
+    if(el) setTimeout(() => el.scrollIntoView(), 60);
+  }
+});
 makeQR("qr1");
 makeQR("qr2");
 
